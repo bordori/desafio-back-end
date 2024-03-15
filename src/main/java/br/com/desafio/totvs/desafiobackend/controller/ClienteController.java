@@ -6,27 +6,21 @@ import br.com.desafio.totvs.desafiobackend.mapper.ClienteMapper;
 import br.com.desafio.totvs.desafiobackend.mapper.EntityMapper;
 import br.com.desafio.totvs.desafiobackend.model.Cliente;
 import br.com.desafio.totvs.desafiobackend.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/cliente")
-public class ClienteController {
+public class ClienteController extends AbstractController<Cliente, ClienteDto, Long, ClienteService, ClienteMapper> {
 
-    @Autowired
-    private ClienteService clienteService;
 
-    @Autowired
-    private ClienteMapper clienteMapper;
-
-    @PostMapping("/incluir")
-    ResponseEntity<ClienteDto> incluir(@RequestBody ClienteDto clienteDto) {
-        Cliente cliente = clienteMapper.toEntity(clienteDto);
-        cliente.getTelefones().forEach(telefone -> telefone.setCliente(cliente));
-        return ResponseEntity.ok(clienteMapper.toDto(clienteService.incluir(cliente)));
-    }
 }

@@ -2,6 +2,7 @@ package br.com.desafio.totvs.desafiobackend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(exclude = "cliente")
 @Table(name = "TELEFONE_CLIENTE")
-public class TelefoneCliente {
+public class TelefoneCliente implements IEntity<Long>{
 
     @Id
     @Column(name = "ID")
