@@ -1,9 +1,16 @@
 package br.com.desafio.totvs.desafiobackend.mapper;
 
-import org.mapstruct.Mapper;
+import java.util.List;
 
-public interface EntityMapper<O, D> {
+/**
+ * Interface para mapeamento de entidades
+ * @param <ENTITY> entidade
+ * @param <DTO> dto
+ */
+public interface EntityMapper<ENTITY, DTO> {
 
-    D toDto(O entity);
-    O toEntity(D dto);
+    DTO toDto(ENTITY entity);
+    ENTITY toEntity(DTO dto);
+    List<ENTITY> toListEntity(List<DTO> dto);
+    List<DTO> toListDto(List<ENTITY> entity);
 }

@@ -3,6 +3,9 @@ package br.com.desafio.totvs.desafiobackend.config;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Classe para retorno de erros na API
+ */
 @Getter
 @Setter
 public class ErrorDto {

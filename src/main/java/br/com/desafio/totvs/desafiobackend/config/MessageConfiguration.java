@@ -16,13 +16,21 @@ import java.util.Locale;
 @Configuration
 public class MessageConfiguration implements WebMvcConfigurer {
 
+    /**
+     * Método para configuração do arquivo de mensagens
+     * @return {@link MessageSource}
+     */
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasenames("classpath:messages", "classpath:genericMessages");
+        messageSource.setBasename("classpath:messages");
         return messageSource;
     }
 
+    /**
+     * Método para configuração do locale resolver
+     * @return {@link LocaleResolver}
+     */
     @Bean
     public LocalValidatorFactoryBean validator() {
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();

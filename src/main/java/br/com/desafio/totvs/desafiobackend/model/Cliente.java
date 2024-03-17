@@ -1,20 +1,22 @@
 package br.com.desafio.totvs.desafiobackend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.hibernate.validator.constraints.Length;
+import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
+/**
+ * Classe para representação de cliente
+ * para operações de banco de dados e regras de negócio
+ */
 @Entity
 @Data
 @EqualsAndHashCode
-@Table(name = "CLIENTE")
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "CLIENTE", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "NOME", name = "UK_CLIENTE_NOME")})
 public class Cliente implements IEntity<Long>{
 
     @Id
@@ -32,5 +34,9 @@ public class Cliente implements IEntity<Long>{
     private String bairro;
 
     @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TelefoneCliente> telefones;
+    private List<TelefoneCliente> telefones;
+
+    public Cliente(Long id) {
+        this.id = id;
+    }
 }

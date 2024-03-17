@@ -19,28 +19,37 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Classe para tratamento de exceções na API
+ */
 @ControllerAdvice
 public class ApiRestResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private final MessageSource messageSource;
-
-    ApiRestResponseExceptionHandler(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
+    /**
+     * Método para tratamento de exceções de negócio da api
+     * @param ex exceção de negócio {@link BusinessException}
+     * @return {@link ResponseEntity<Object>}
+     */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> handleBusinessException(BusinessException ex) {
-
         if (ex.getCode() == null){
             return ResponseEntity.status(500).body(ex.getMessage());
         } else {
-            HttpStatus httpStatus = HttpStatus.valueOf(ex.getCode().getCode());
+            HttpStatus httpStatus = HttpStatus.valueOf(ex.getCode());
             return ResponseEntity
                     .status(httpStatus)
-                    .body(new ApiErrorDto(httpStatus.value(), httpStatus.getReasonPhrase(), getMessage(ex)));
+                    .body(new ApiErrorDto(httpStatus.value(), httpStatus.getReasonPhrase(),ex.getMessage()));
         }
     }
 
+    /**
+     * Método para tratamento de exceções de validação de campos
+     * @param ex exceção de validação de campos {@link MethodArgumentNotValidException}
+     * @param headers cabeçalhos da requisição
+     * @param status status da requisição
+     * @param request requisição
+     * @return {@link ResponseEntity<Object>}
+     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Set<ErrorDto> errors = ex.getBindingResult()
@@ -52,9 +61,5 @@ public class ApiRestResponseExceptionHandler extends ResponseEntityExceptionHand
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ApiErrorDto(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), errors));
-    }
-
-    private String getMessage(BusinessException ex) {
-        return messageSource.getMessage(ex.getCode().getMessage(), null, Locale.getDefault());
     }
 }

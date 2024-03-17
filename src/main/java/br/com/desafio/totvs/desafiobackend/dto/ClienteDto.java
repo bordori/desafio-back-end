@@ -7,6 +7,10 @@ import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 
+/**
+ * Classe para representação de cliente
+ * para operações de api rest
+ */
 @Data
 public class ClienteDto {
 

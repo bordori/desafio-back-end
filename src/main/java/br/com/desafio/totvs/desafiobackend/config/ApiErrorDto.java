@@ -3,9 +3,11 @@ package br.com.desafio.totvs.desafiobackend.config;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Set;
 
+/**
+ * Classe para retorno de erros na API
+ */
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -3,21 +3,15 @@ package br.com.desafio.totvs.desafiobackend.controller;
 
 import br.com.desafio.totvs.desafiobackend.dto.ClienteDto;
 import br.com.desafio.totvs.desafiobackend.mapper.ClienteMapper;
-import br.com.desafio.totvs.desafiobackend.mapper.EntityMapper;
 import br.com.desafio.totvs.desafiobackend.model.Cliente;
 import br.com.desafio.totvs.desafiobackend.service.ClienteService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+/**
+ * Classe para operações de api rest de cliente
+ * extends {@link AbstractController}
+ */
 @RestController
 @RequestMapping("/cliente")
 public class ClienteController extends AbstractController<Cliente, ClienteDto, Long, ClienteService, ClienteMapper> {

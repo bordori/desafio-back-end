@@ -6,13 +6,17 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
+/**
+ * Anotação para validação de telefone
+ * {@link TelefoneValidation}
+ */
 @Documented
 @Constraint(validatedBy = TelefoneValidation.class)
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Telefone {
 
-    String message() default "Telefone inválido";
+    String message() default "{cliente.telefone.invalido}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

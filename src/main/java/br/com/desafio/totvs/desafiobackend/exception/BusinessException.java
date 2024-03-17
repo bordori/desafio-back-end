@@ -2,30 +2,21 @@ package br.com.desafio.totvs.desafiobackend.exception;
 
 import lombok.Getter;
 
-import java.io.Serial;
-import java.util.Map;
-
+/**
+ * Classe para representação de exceções de negócio
+ * extends {@link RuntimeException}
+ */
 @Getter
-public class BusinessException extends Exception {
+public class BusinessException extends RuntimeException {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    private AbstractMessageCodeError code;
-    private final Map<String, Object> mapDetails;
+    private final Integer code;
 
     public BusinessException(AbstractMessageCodeError code) {
-        this.code = code;
-        this.mapDetails = Map.of();
+        super(code.getMessage());
+        this.code = code.getCode();
     }
 
-    public BusinessException(final Throwable ex) {
-        super(ex);
-        this.mapDetails = null;
-    }
 
-    public BusinessException() {
-        this.mapDetails = null;
-    }
+
 
 }
