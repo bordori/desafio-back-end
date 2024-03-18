@@ -13,10 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.MessageSource;
 
-import java.beans.Transient;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -72,9 +69,7 @@ public class ClienteServiceTest {
     void deveVerificarSeONomeDoClienteFoiInformadoAoIncluir() {
         Cliente cliente = new Cliente(1L, "  ", "Rua 1", "Bairro 1", null);
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.incluir(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.incluir(cliente));
 
         assertEquals(ClienteRegraNegocio.NOME_OBRIGATORIO.getMessage(), e.getMessage());
         verifyNoInteractions(clienteRepository);
@@ -84,9 +79,7 @@ public class ClienteServiceTest {
     void deveVerificarSeONomeDoClienteTemNoMinimoDezCaracteresAoIncluir() {
         Cliente cliente = new Cliente(1L, "Cliente", "Rua 1", "Bairro 1", null);
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.incluir(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.incluir(cliente));
 
         assertEquals(ClienteRegraNegocio.NOME_MINIMO_CARACTERES.getMessage(), e.getMessage());
         verifyNoInteractions(clienteRepository);
@@ -94,17 +87,15 @@ public class ClienteServiceTest {
 
     @Test
     void deveVerificarSeOClienteJaFoiIncluido() {
-        Cliente cliente = new Cliente(1L, "Cliente ja incluso", "Rua 1", "Bairro 1", null);
-        Cliente clienteIncluido = new Cliente(2L, "Cliente ja incluso", "Rua 2", "Bairro 2", null);
+        Cliente cliente = new Cliente(1L, "cliente ja incluso", "Rua 1", "Bairro 1", null);
+        Cliente clienteIncluido = new Cliente(2L, "CLIENTE JA INCLUSO", "Rua 2", "Bairro 2", null);
 
-        when(clienteRepository.findByNome(cliente.getNome())).thenReturn(Optional.of(Collections.singletonList(clienteIncluido)));
+        when(clienteRepository.findByNomeContainingIgnoreCase(cliente.getNome())).thenReturn(Optional.of(Collections.singletonList(clienteIncluido)));
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.incluir(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.incluir(cliente));
 
         assertEquals(ClienteRegraNegocio.CLIENTE_NOME_EXISTENTE.getMessage(), e.getMessage());
-        verify(clienteRepository).findByNome(cliente.getNome());
+        verify(clienteRepository).findByNomeContainingIgnoreCase(cliente.getNome());
         verifyNoMoreInteractions(clienteRepository);
     }
 
@@ -126,9 +117,7 @@ public class ClienteServiceTest {
         Cliente cliente = new Cliente(1L, "Cliente Sem Telefone", "Rua 1", "Bairro 1",
                 Collections.singletonList(new TelefoneCliente(1L, "  ", null)));
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.incluir(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.incluir(cliente));
 
         assertEquals(ClienteRegraNegocio.TELEFONE_OBRIGATORIO.getMessage(), e.getMessage());
         verifyNoInteractions(clienteRepository);
@@ -139,9 +128,7 @@ public class ClienteServiceTest {
         Cliente cliente = new Cliente(1L, "Cliente Sem Telefone", "Rua 1", "Bairro 1",
                 Collections.singletonList(new TelefoneCliente(1L, "123", null)));
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.incluir(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.incluir(cliente));
 
         assertEquals(ClienteRegraNegocio.TELEFONE_INVALIDO.getMessage(), e.getMessage());
         verifyNoInteractions(clienteRepository);
@@ -156,9 +143,7 @@ public class ClienteServiceTest {
         when(telefoneClienteService.findByTelefone(telefoneClienteIncluido.getTelefone()))
                 .thenReturn(Optional.of(Collections.singletonList(telefoneClienteIncluido)));
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.incluir(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.incluir(cliente));
 
         assertEquals(ClienteRegraNegocio.TELEFONE_EXISTENTE.getMessage(), e.getMessage());
         verify(telefoneClienteService).findByTelefone(telefoneClienteIncluido.getTelefone());
@@ -168,17 +153,15 @@ public class ClienteServiceTest {
     @Test
     void deveVerificarSeONomeDoClienteJaFoiIncluidoAoAlterar() {
         Cliente cliente = new Cliente(1L, "Cliente ja incluso", "Rua 1", "Bairro 1", null);
-        Cliente clienteIncluido = new Cliente(2L, "Cliente ja incluso", "Rua 2", "Bairro 2", null);
+        Cliente clienteIncluido = new Cliente(2L, "CLIENTE JA INCLUSO", "Rua 2", "Bairro 2", null);
 
-        when(clienteRepository.findByNome(cliente.getNome()))
+        when(clienteRepository.findByNomeContainingIgnoreCase(cliente.getNome()))
                 .thenReturn(Optional.of(Collections.singletonList(clienteIncluido)));
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.alterar(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.alterar(cliente));
 
         assertEquals(ClienteRegraNegocio.CLIENTE_NOME_EXISTENTE.getMessage(), e.getMessage());
-        verify(clienteRepository).findByNome(cliente.getNome());
+        verify(clienteRepository).findByNomeContainingIgnoreCase(cliente.getNome());
         verifyNoMoreInteractions(clienteRepository);
     }
 
@@ -191,9 +174,7 @@ public class ClienteServiceTest {
         when(telefoneClienteService.findByTelefone(cliente.getTelefones().get(0).getTelefone()))
                 .thenReturn(Optional.of(Collections.singletonList(telefoneClienteIncluido)));
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.alterar(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.alterar(cliente));
 
         assertEquals(ClienteRegraNegocio.TELEFONE_EXISTENTE.getMessage(), e.getMessage());
         verify(telefoneClienteService).findByTelefone(telefoneClienteIncluido.getTelefone());
@@ -205,9 +186,7 @@ public class ClienteServiceTest {
         Cliente cliente = new Cliente(1L, "Cliente Sem Telefone", "Rua 1", "Bairro 1",
                 Collections.singletonList(new TelefoneCliente(1L, "123", new Cliente(1L))));
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.alterar(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.alterar(cliente));
 
         assertEquals(ClienteRegraNegocio.TELEFONE_INVALIDO.getMessage(), e.getMessage());
         verifyNoInteractions(clienteRepository);
@@ -218,9 +197,7 @@ public class ClienteServiceTest {
         Cliente cliente = new Cliente(1L, "Cliente Sem Telefone", "Rua 1", "Bairro 1",
                 Collections.singletonList(new TelefoneCliente(1L, "  ", new Cliente(1L))));
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.alterar(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.alterar(cliente));
 
         assertEquals(ClienteRegraNegocio.TELEFONE_OBRIGATORIO.getMessage(), e.getMessage());
         verifyNoInteractions(clienteRepository);
@@ -230,9 +207,7 @@ public class ClienteServiceTest {
     void deveVerificarSeONomeDoClienteFoiInformadoAoAlterar() {
         Cliente cliente = new Cliente(1L, "  ", "Rua 1", "Bairro 1", null);
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.alterar(cliente);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.alterar(cliente));
 
         assertEquals(ClienteRegraNegocio.NOME_OBRIGATORIO.getMessage(), e.getMessage());
         verifyNoInteractions(clienteRepository);
@@ -284,9 +259,7 @@ public class ClienteServiceTest {
         Long id = 1L;
         when(clienteRepository.existsById(id)).thenReturn(false);
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.excluir(id);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.excluir(id));
 
         assertEquals(GenericMessageError.REGISTRO_NAO_ENCONTRADO.getMessage(), e.getMessage());
         verify(clienteRepository).existsById(id);
@@ -309,9 +282,7 @@ public class ClienteServiceTest {
     void deveVerificarSeOIdDoClienteFoiInformadoAoObterPorId() {
         Long id = null;
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.obterPorId(id);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.obterPorId(id));
 
         assertEquals(GenericMessageError.REGISTRO_NAO_INFORMADO.getMessage(), e.getMessage());
         verifyNoInteractions(clienteRepository);
@@ -322,9 +293,7 @@ public class ClienteServiceTest {
         Long id = 1L;
         when(clienteRepository.findById(id)).thenReturn(java.util.Optional.empty());
 
-        BusinessException e = assertThrows(BusinessException.class, () -> {
-            clienteService.obterPorId(id);
-        });
+        BusinessException e = assertThrows(BusinessException.class, () -> clienteService.obterPorId(id));
 
         assertEquals(GenericMessageError.REGISTRO_NAO_ENCONTRADO.getMessage(), e.getMessage());
         verify(clienteRepository).findById(id);

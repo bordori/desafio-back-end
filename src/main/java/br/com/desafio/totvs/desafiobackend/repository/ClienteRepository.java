@@ -14,5 +14,5 @@ import java.util.Optional;
  */
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
-    public Optional<List<Cliente>> findByNome(String nome);
+    public Optional<List<Cliente>> findByNomeContainingIgnoreCase(String nome);
 }

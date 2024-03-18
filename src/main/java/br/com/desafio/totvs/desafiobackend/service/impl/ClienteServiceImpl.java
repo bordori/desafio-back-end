@@ -13,8 +13,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Implementação do serviço de cliente
@@ -86,14 +85,15 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long, ClienteRe
      */
     @Override
     public void validarRegrasNegocio(Cliente entity) {
-        Optional<List<Cliente>> clientes = obterPorNome(entity.getNome());
+        Optional<List<Cliente>> clientes = findByNomeContainingIgnoreCase(entity.getNome());
         clientes.ifPresent(clienteList -> clienteList.forEach(cliente -> {
-            if (!cliente.getId().equals(entity.getId())) {
+            if (cliente.getNome().equalsIgnoreCase(entity.getNome()) &&
+                    !cliente.getId().equals(entity.getId())) {
                 throw new BusinessException(ClienteRegraNegocio.CLIENTE_NOME_EXISTENTE);
             }
         }));
 
-        if (entity.getTelefones() != null)
+        if (entity.getTelefones() != null) {
             entity.getTelefones().forEach(telefone -> {
                 Optional<List<TelefoneCliente>> clientesTelefone = telefoneClienteService.findByTelefone(telefone.getTelefone());
                 clientesTelefone.ifPresent(telefonesCliente -> {
@@ -106,6 +106,7 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long, ClienteRe
                     });
                 });
             });
+        }
     }
 
     /**
@@ -128,7 +129,7 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long, ClienteRe
      * @return lista de clientes {@link Cliente}
      */
     @Override
-    public Optional<List<Cliente>> obterPorNome(String nome) {
-        return repository.findByNome(nome);
+    public Optional<List<Cliente>> findByNomeContainingIgnoreCase(String nome) {
+        return repository.findByNomeContainingIgnoreCase(nome);
     }
 }

@@ -12,5 +12,5 @@ import java.util.Optional;
  */
 public interface ClienteService extends GenericService<Cliente, Long> {
 
-    Optional<List<Cliente>> obterPorNome(String nome);
+    Optional<List<Cliente>> findByNomeContainingIgnoreCase(String nome);
 }

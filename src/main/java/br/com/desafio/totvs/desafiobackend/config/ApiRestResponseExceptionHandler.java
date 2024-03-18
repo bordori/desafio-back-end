@@ -32,21 +32,20 @@ public class ApiRestResponseExceptionHandler extends ResponseEntityExceptionHand
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> handleBusinessException(BusinessException ex) {
-        if (ex.getCode() == null){
-            return ResponseEntity.status(500).body(ex.getMessage());
-        } else {
-            HttpStatus httpStatus = HttpStatus.valueOf(ex.getCode());
-            return ResponseEntity
-                    .status(httpStatus)
-                    .body(new ApiErrorDto(httpStatus.value(), httpStatus.getReasonPhrase(),ex.getMessage()));
-        }
+        HttpStatus httpStatus = HttpStatus.valueOf(ex.getCode() != null ? ex.getCode() : 400);
+
+        ApiErrorDto apiErrorDto = new ApiErrorDto(httpStatus.value(), httpStatus.getReasonPhrase(), ex.getMessage());
+
+        return ResponseEntity
+                .status(httpStatus)
+                .body(apiErrorDto);
     }
 
     /**
      * Método para tratamento de exceções de validação de campos
-     * @param ex exceção de validação de campos {@link MethodArgumentNotValidException}
+     * @param ex      exceção de validação de campos {@link MethodArgumentNotValidException}
      * @param headers cabeçalhos da requisição
-     * @param status status da requisição
+     * @param status  status da requisição
      * @param request requisição
      * @return {@link ResponseEntity<Object>}
      */

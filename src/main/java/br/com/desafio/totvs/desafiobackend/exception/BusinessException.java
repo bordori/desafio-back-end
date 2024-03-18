@@ -11,12 +11,9 @@ public class BusinessException extends RuntimeException {
 
     private final Integer code;
 
+
     public BusinessException(AbstractMessageCodeError code) {
         super(code.getMessage());
         this.code = code.getCode();
     }
-
-
-
-
 }
