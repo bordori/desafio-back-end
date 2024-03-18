@@ -209,8 +209,9 @@ public abstract class BaseServiceImpl<ENTITY extends IEntity<PK_TYPE>,
         List<Field> fieldList = Arrays.stream(entity.getClass().getDeclaredFields()).toList();
         for (Field field : fieldList) {
             if (String.class.isAssignableFrom(field.getType())) {
-                String value = getFieldValue(entity, field.getName()).toString();
-                if (value != null) {
+                Object object = getFieldValue(entity, field.getName());
+                if (object != null) {
+                    String value = (String) object;
                     value = Util.retiraEspacosVazios(value);
                     setFieldValue(entity, field.getName(), value);
                 }

@@ -5,6 +5,7 @@ import br.com.desafio.totvs.desafiobackend.model.IEntity;
 import br.com.desafio.totvs.desafiobackend.service.GenericService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,9 +39,9 @@ public abstract class AbstractController<ENTITY extends IEntity<PK_TYPE>,
      * @return dtoEnity da entidade
      */
     @PostMapping("/incluir")
-    public DTO_ENTITY incluir(@RequestBody DTO_ENTITY dtoEntity) {
+    public ResponseEntity<DTO_ENTITY> incluir(@RequestBody DTO_ENTITY dtoEntity) {
         ENTITY entity = mapper.toEntity(dtoEntity);
-        return mapper.toDto(service.incluir(entity));
+        return ResponseEntity.ok(mapper.toDto(service.incluir(entity)));
     }
 
     /**
@@ -49,9 +50,9 @@ public abstract class AbstractController<ENTITY extends IEntity<PK_TYPE>,
      * @return dtoEntity da entidade
      */
     @PutMapping("/alterar")
-    public DTO_ENTITY alterar(@Valid @RequestBody DTO_ENTITY dtoEntity) {
+    public ResponseEntity<DTO_ENTITY> alterar(@Valid @RequestBody DTO_ENTITY dtoEntity) {
         ENTITY entity = mapper.toEntity(dtoEntity);
-        return mapper.toDto(service.alterar(entity));
+        return ResponseEntity.ok(mapper.toDto(service.alterar(entity)));
     }
 
     /**
@@ -69,8 +70,8 @@ public abstract class AbstractController<ENTITY extends IEntity<PK_TYPE>,
      * @return dto da entidade
      */
     @GetMapping("/{id}")
-    public DTO_ENTITY obterPorId(@PathVariable(name = "id") PK_TYPE id) {
-        return mapper.toDto(service.obterPorId(id));
+    public ResponseEntity<DTO_ENTITY> obterPorId(@PathVariable(name = "id") PK_TYPE id) {
+        return ResponseEntity.ok(mapper.toDto(service.obterPorId(id)));
     }
 
     /**
@@ -78,7 +79,7 @@ public abstract class AbstractController<ENTITY extends IEntity<PK_TYPE>,
      * @return lista de dto da entidade
      */
     @GetMapping()
-    public List<DTO_ENTITY> obterTodos() {
-        return mapper.toListDto(service.obterTodos());
+    public ResponseEntity<List<DTO_ENTITY>> obterTodos() {
+        return ResponseEntity.ok(mapper.toListDto(service.obterTodos()));
     }
 }

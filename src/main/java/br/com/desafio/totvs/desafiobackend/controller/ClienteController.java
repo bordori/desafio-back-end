@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * extends {@link AbstractController}
  */
 @RestController
-@RequestMapping("/cliente")
+@RequestMapping("api/cliente")
 public class ClienteController extends AbstractController<Cliente, ClienteDto, Long, ClienteService, ClienteMapper> {
 
 
