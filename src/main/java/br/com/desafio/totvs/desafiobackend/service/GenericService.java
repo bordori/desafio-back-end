@@ -3,6 +3,7 @@ package br.com.desafio.totvs.desafiobackend.service;
 import br.com.desafio.totvs.desafiobackend.model.IEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Interface para serviço genérico
@@ -43,6 +44,6 @@ public interface GenericService<ENTITY extends IEntity<PK_TYPE>, PK_TYPE> {
      * Obtem todas as entidades
      * @return lista de entidades
      */
-    List<ENTITY> obterTodos();
+    Optional<List<ENTITY>> obterTodos();
 
 }

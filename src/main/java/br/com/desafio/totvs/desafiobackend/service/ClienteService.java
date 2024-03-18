@@ -3,6 +3,7 @@ package br.com.desafio.totvs.desafiobackend.service;
 import br.com.desafio.totvs.desafiobackend.model.Cliente;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Interface para serviço de cliente
@@ -11,5 +12,5 @@ import java.util.List;
  */
 public interface ClienteService extends GenericService<Cliente, Long> {
 
-    public List<Cliente> obterPorNome(String nome);
+    Optional<List<Cliente>> obterPorNome(String nome);
 }

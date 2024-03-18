@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementação do serviço de cliente
@@ -30,11 +31,12 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long, ClienteRe
     /**
      * Método implementado de {@link BaseServiceImpl#validarCampos(IEntity)}
      * para validar campos obrigatórios
+     *
      * @param cliente entidade {@link Cliente}
      * @throws BusinessException caso ocorra erro de validação
      */
     @Override
-    public void validarCampos(Cliente cliente)  {
+    public void validarCampos(Cliente cliente) {
         if (Strings.isEmpty(cliente.getNome()) || cliente.getNome().isBlank()) {
             throw new BusinessException(ClienteRegraNegocio.NOME_OBRIGATORIO);
         }
@@ -46,19 +48,20 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long, ClienteRe
         verificaSeExisteTelefoneDuplicado(cliente);
 
         if (cliente.getTelefones() != null) {
-            for (TelefoneCliente telefone : cliente.getTelefones()) {
+            cliente.getTelefones().forEach(telefone -> {
                 if (Strings.isEmpty(telefone.getTelefone()) || telefone.getTelefone().isBlank()) {
                     throw new BusinessException(ClienteRegraNegocio.TELEFONE_OBRIGATORIO);
                 } else if (!Util.validarTelefone(telefone.getTelefone())) {
                     throw new BusinessException(ClienteRegraNegocio.TELEFONE_INVALIDO);
                 }
-            }
+            });
         }
     }
 
     /**
      * Método para verificar se existe telefone duplicado
      * na lista de telefones do cliente
+     *
      * @param cliente entidade {@link Cliente}
      * @throws BusinessException caso ocorra erro de validação
      */
@@ -77,54 +80,55 @@ public class ClienteServiceImpl extends BaseServiceImpl<Cliente, Long, ClienteRe
     /**
      * Método implementado de {@link BaseServiceImpl#validarRegrasNegocio(IEntity)}
      * para validar regras de negócio
+     *
      * @param entity entidade {@link Cliente}
      * @throws BusinessException caso ocorra erro de validação
      */
     @Override
     public void validarRegrasNegocio(Cliente entity) {
-        List<Cliente> clientes = obterPorNome(entity.getNome());
-        if (clientes != null && !clientes.isEmpty()) {
-            if (clientes.size() > 1 || !clientes.get(0).getId().equals(entity.getId())) {
+        Optional<List<Cliente>> clientes = obterPorNome(entity.getNome());
+        clientes.ifPresent(clienteList -> clienteList.forEach(cliente -> {
+            if (!cliente.getId().equals(entity.getId())) {
                 throw new BusinessException(ClienteRegraNegocio.CLIENTE_NOME_EXISTENTE);
             }
-        }
+        }));
 
         if (entity.getTelefones() != null)
-            for (TelefoneCliente telefone : entity.getTelefones()) {
-                List<TelefoneCliente> clientesTelefone = telefoneClienteService.findByTelefone(telefone.getTelefone());
-                if (clientesTelefone != null && !clientesTelefone.isEmpty()) {
-                    for (TelefoneCliente telefoneCliente : clientesTelefone) {
-                        if (telefoneCliente.getCliente().getId().equals(telefone.getCliente().getId())){
+            entity.getTelefones().forEach(telefone -> {
+                Optional<List<TelefoneCliente>> clientesTelefone = telefoneClienteService.findByTelefone(telefone.getTelefone());
+                clientesTelefone.ifPresent(telefonesCliente -> {
+                    telefonesCliente.forEach(telefoneCliente -> {
+                        if (telefoneCliente.getCliente().getId().equals(telefone.getCliente().getId())) {
                             telefone.setId(telefoneCliente.getId());
                         } else {
                             throw new BusinessException(ClienteRegraNegocio.TELEFONE_EXISTENTE);
                         }
-                    }
-                }
-            }
+                    });
+                });
+            });
     }
 
     /**
      * Método implementado de {@link BaseServiceImpl#prepararDadosIncluirAlterar(IEntity)}
      * para preparar os dados antes de incluir ou alterar
+     *
      * @param cliente entidade {@link Cliente}
      */
     @Override
     public void prepararDadosIncluirAlterar(Cliente cliente) {
         if (cliente.getTelefones() != null)
-            for (TelefoneCliente telefone : cliente.getTelefones()) {
-                telefone.setTelefone(Util.somenteNumeros(telefone.getTelefone()));
-            }
+            cliente.getTelefones().forEach(telefone -> telefone.setTelefone(Util.somenteNumeros(telefone.getTelefone())));
         super.prepararDadosIncluirAlterar(cliente);
     }
 
     /**
      * Método para obter cliente por nome
+     *
      * @param nome nome do cliente
      * @return lista de clientes {@link Cliente}
      */
     @Override
-    public List<Cliente> obterPorNome(String nome) {
+    public Optional<List<Cliente>> obterPorNome(String nome) {
         return repository.findByNome(nome);
     }
 }

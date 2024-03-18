@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementação do serviço de telefone do cliente
@@ -22,7 +23,7 @@ public class TelefoneClienteServiceImpl implements TelefoneClienteService {
     TelefoneClienteRepository repository;
 
     @Override
-    public List<TelefoneCliente> findByTelefone(String telefone) {
+    public Optional<List<TelefoneCliente>> findByTelefone(String telefone) {
         return repository.findByTelefone(telefone);
     }
 }

@@ -18,6 +18,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Classe base para implementação de serviços
@@ -120,8 +121,8 @@ public abstract class BaseServiceImpl<ENTITY extends IEntity<PK_TYPE>,
      * @return lista de entidades {@link ENTITY}
      */
     @Override
-    public List<ENTITY> obterTodos() {
-        return repository.findAll();
+    public Optional<List<ENTITY>> obterTodos() {
+        return Optional.of(repository.findAll());
     }
 
     /**
@@ -142,9 +143,9 @@ public abstract class BaseServiceImpl<ENTITY extends IEntity<PK_TYPE>,
     private void setListReference(ENTITY entity) {
         List<Field> fieldList = Arrays.stream(entity.getClass().getDeclaredFields()).toList();
 
-        for (Field field : fieldList) {
+        fieldList.forEach(field -> {
             if (!Collection.class.isAssignableFrom(field.getType()))
-                continue;
+                return;
 
             ParameterizedType listType = (ParameterizedType) field.getGenericType();
             Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
@@ -153,17 +154,17 @@ public abstract class BaseServiceImpl<ENTITY extends IEntity<PK_TYPE>,
 
 
             if (list == null)
-                continue;
+                return;
 
-            for (Object object : list) {
+            list.forEach(object -> {
                 List<Field> auxFieldList = Arrays.stream(object.getClass().getDeclaredFields()).toList();
                 for (Field auxField : auxFieldList) {
                     if (auxField.getType().isAssignableFrom(entity.getClass())) {
                         setFieldValue(object, auxField.getName(), entity);
                     }
                 }
-            }
-        }
+            });
+        });
     }
 
     /**
@@ -207,7 +208,7 @@ public abstract class BaseServiceImpl<ENTITY extends IEntity<PK_TYPE>,
      */
     public void retirarEspacosEmBranco(ENTITY entity) {
         List<Field> fieldList = Arrays.stream(entity.getClass().getDeclaredFields()).toList();
-        for (Field field : fieldList) {
+        fieldList.forEach(field -> {
             if (String.class.isAssignableFrom(field.getType())) {
                 Object object = getFieldValue(entity, field.getName());
                 if (object != null) {
@@ -220,13 +221,11 @@ public abstract class BaseServiceImpl<ENTITY extends IEntity<PK_TYPE>,
                 var list = (Collection<?>) getFieldValue(entity, field.getName());
 
                 if (list == null)
-                    continue;
+                    return;
 
-                for (Object object : list) {
-                    retirarEspacosEmBranco((ENTITY) object);
-                }
+                list.forEach(object -> retirarEspacosEmBranco((ENTITY) object));
             }
-        }
+        });
     }
 
     /**

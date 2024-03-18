@@ -3,6 +3,7 @@ package br.com.desafio.totvs.desafiobackend.service;
 import br.com.desafio.totvs.desafiobackend.model.TelefoneCliente;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Interface para serviço de telefone do cliente
@@ -15,6 +16,6 @@ public interface TelefoneClienteService {
      * @param telefone número do telefone
      * @return lista de {@link TelefoneCliente}
      */
-    public List<TelefoneCliente> findByTelefone(String telefone);
+    Optional<List<TelefoneCliente>> findByTelefone(String telefone);
 
 }

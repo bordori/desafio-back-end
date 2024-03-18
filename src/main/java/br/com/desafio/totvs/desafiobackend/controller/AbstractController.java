@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,6 +81,6 @@ public abstract class AbstractController<ENTITY extends IEntity<PK_TYPE>,
      */
     @GetMapping()
     public ResponseEntity<List<DTO_ENTITY>> obterTodos() {
-        return ResponseEntity.ok(mapper.toListDto(service.obterTodos()));
+        return ResponseEntity.ok(mapper.toListDto(service.obterTodos().orElse(new ArrayList<>())));
     }
 }

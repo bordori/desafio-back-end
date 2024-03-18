@@ -16,7 +16,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 
 import java.beans.Transient;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -95,7 +97,7 @@ public class ClienteServiceTest {
         Cliente cliente = new Cliente(1L, "Cliente ja incluso", "Rua 1", "Bairro 1", null);
         Cliente clienteIncluido = new Cliente(2L, "Cliente ja incluso", "Rua 2", "Bairro 2", null);
 
-        when(clienteRepository.findByNome(cliente.getNome())).thenReturn(Collections.singletonList(clienteIncluido));
+        when(clienteRepository.findByNome(cliente.getNome())).thenReturn(Optional.of(Collections.singletonList(clienteIncluido)));
 
         BusinessException e = assertThrows(BusinessException.class, () -> {
             clienteService.incluir(cliente);
@@ -151,7 +153,8 @@ public class ClienteServiceTest {
                 Collections.singletonList(new TelefoneCliente(1L, "62999999999", new Cliente(1L))));
         TelefoneCliente telefoneClienteIncluido = new TelefoneCliente(2L, "62999999999", new Cliente(2L));
 
-        when(telefoneClienteService.findByTelefone(telefoneClienteIncluido.getTelefone())).thenReturn(Collections.singletonList(telefoneClienteIncluido));
+        when(telefoneClienteService.findByTelefone(telefoneClienteIncluido.getTelefone()))
+                .thenReturn(Optional.of(Collections.singletonList(telefoneClienteIncluido)));
 
         BusinessException e = assertThrows(BusinessException.class, () -> {
             clienteService.incluir(cliente);
@@ -167,7 +170,8 @@ public class ClienteServiceTest {
         Cliente cliente = new Cliente(1L, "Cliente ja incluso", "Rua 1", "Bairro 1", null);
         Cliente clienteIncluido = new Cliente(2L, "Cliente ja incluso", "Rua 2", "Bairro 2", null);
 
-        when(clienteRepository.findByNome(cliente.getNome())).thenReturn(Collections.singletonList(clienteIncluido));
+        when(clienteRepository.findByNome(cliente.getNome()))
+                .thenReturn(Optional.of(Collections.singletonList(clienteIncluido)));
 
         BusinessException e = assertThrows(BusinessException.class, () -> {
             clienteService.alterar(cliente);
@@ -184,7 +188,8 @@ public class ClienteServiceTest {
                 Collections.singletonList(new TelefoneCliente(1L, "62999999999", new Cliente(1L))));
         TelefoneCliente telefoneClienteIncluido = new TelefoneCliente(2L, "62999999999", new Cliente(2L));
 
-        when(telefoneClienteService.findByTelefone(cliente.getTelefones().get(0).getTelefone())).thenReturn(Collections.singletonList(telefoneClienteIncluido));
+        when(telefoneClienteService.findByTelefone(cliente.getTelefones().get(0).getTelefone()))
+                .thenReturn(Optional.of(Collections.singletonList(telefoneClienteIncluido)));
 
         BusinessException e = assertThrows(BusinessException.class, () -> {
             clienteService.alterar(cliente);

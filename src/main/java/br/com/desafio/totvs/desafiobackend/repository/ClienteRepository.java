@@ -5,6 +5,7 @@ import br.com.desafio.totvs.desafiobackend.model.TelefoneCliente;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repositório para cliente
@@ -13,5 +14,5 @@ import java.util.List;
  */
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
-    public List<Cliente> findByNome(String nome);
+    public Optional<List<Cliente>> findByNome(String nome);
 }
